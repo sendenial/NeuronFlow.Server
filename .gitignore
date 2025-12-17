@@ -1,0 +1,8 @@
+integration-flow/NeuronFlow.Server/NeuronFlow.Application/bin
+integration-flow/NeuronFlow.Server/NeuronFlow.Application/obj
+integration-flow/NeuronFlow.Server/NeuronFlow.Domain/bin
+integration-flow/NeuronFlow.Server/NeuronFlow.Domain/obj
+integration-flow/NeuronFlow.Server/NeuronFlow.Infrastructure/bin
+integration-flow/NeuronFlow.Server/NeuronFlow.Infrastructure/obj
+integration-flow/NeuronFlow.Server/NeuronFlow.Server/bin
+integration-flow/NeuronFlow.Server/NeuronFlow.Server/obj
