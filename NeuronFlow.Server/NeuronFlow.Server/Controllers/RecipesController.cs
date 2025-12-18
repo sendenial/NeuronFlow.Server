@@ -77,8 +77,7 @@ namespace NeuronFlow.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Recipe>> CreateRecipe(CreateRecipeDto request)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Guid? userId = string.IsNullOrEmpty(userIdString) ? null : Guid.Parse(userIdString);
+            var userId = GetUserId();
 
             var recipe = new Recipe
             {
@@ -117,6 +116,12 @@ namespace NeuronFlow.Server.Controllers
 
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+        private Guid GetUserId()
+        {
+            var userIdClaim = User.FindFirst("uid")?.Value;
+            return Guid.TryParse(userIdClaim, out var userId) ? userId : Guid.Empty;
         }
     }
 }

@@ -1,32 +1,32 @@
 import axios from 'axios';
 
-const API_URL = 'https://localhost:7186/api';
+// 1. Set the Base URL to your .NET Server API
+const API_URL = 'https://localhost:7186/api'; // Check your launchSettings.json for the port (7186, 5000, etc.)
 
 const api = axios.create({
-  baseURL: API_URL,
+    baseURL: API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// 2. Add Request Interceptor to attach Token automatically
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
+// 3. Fix the Login Function to match the route "api/Auth/login"
 export const login = async (email, password) => {
-  const response = await api.post('/auth/login', { email, password });
-  if (response.data.token) {
-    localStorage.setItem('token', response.data.token);
-    localStorage.setItem('user', JSON.stringify(response.data));
-  }
-  return response.data;
-};
-
-export const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  window.location.href = '/login';
+    // The backend expects { email, password } based on LoginRequest.cs
+    const response = await api.post('/auth/login', { email, password });
+    return response.data;
 };
 
 export default api;

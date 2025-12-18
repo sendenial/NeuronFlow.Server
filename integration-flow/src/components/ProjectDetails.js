@@ -143,7 +143,7 @@ export default function ProjectDetails() {
             </Dropdown.Toggle>
             <Dropdown.Menu align="end" className="shadow border-0 mt-2">
                 <Dropdown.Header className="text-uppercase small fw-bold">Create New</Dropdown.Header>
-                <Dropdown.Item onClick={() => navigate('/dashboard/builder')} className="py-2"><span className="me-2">📜</span> Recipe</Dropdown.Item>
+                <Dropdown.Item onClick={() => navigate('/dashboard/recipe/new')} className="py-2"><span className="me-2">📜</span> Recipe</Dropdown.Item>
                 <Dropdown.Item onClick={() => { setEditingAsset(null); setShowConnModal(true); }} className="py-2"><span className="me-2">⚡</span> Connection</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>

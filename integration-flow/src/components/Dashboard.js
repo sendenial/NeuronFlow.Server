@@ -1,14 +1,16 @@
 import React from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Navbar, Nav, Container, Row, Col } from 'react-bootstrap';
-import { logout } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
 
+  const { logoutAction } = useAuth();
+
   const handleLogout = () => {
-    logout();
+    logoutAction();
     navigate('/login');
   };
 
@@ -28,27 +30,22 @@ export default function Dashboard() {
         <div className="bg-light border-end" style={{ width: '250px', minHeight: '100%' }}>
           <div className="p-3">
             <Nav className="flex-column nav-pills">
-              
-              <NavLink to="/dashboard/projects" className={({isActive}) => `nav-link mb-2 ${isActive ? 'active' : 'link-dark'}`}>
+
+              <NavLink to="/dashboard/projects" className={({ isActive }) => `nav-link mb-2 ${isActive ? 'active' : 'link-dark'}`}>
                 📊 Projects
               </NavLink>
 
-              {/* UPDATED: Points to the new Recipe Setup Wizard */}
-              <NavLink to="/dashboard/recipe/new" className={({isActive}) => `nav-link mb-2 ${isActive ? 'active' : 'link-dark'}`}>
-                ⚡ New Recipe
-              </NavLink>
-
-              <NavLink to="/dashboard/connections" className={({isActive}) => `nav-link mb-2 ${isActive ? 'active' : 'link-dark'}`}>
+              <NavLink to="/dashboard/connections" className={({ isActive }) => `nav-link mb-2 ${isActive ? 'active' : 'link-dark'}`}>
                 🔌 Connections
               </NavLink>
-
+              
             </Nav>
           </div>
         </div>
 
         {/* Main Content Area */}
         <div className="flex-grow-1 bg-light">
-          <Outlet /> 
+          <Outlet />
         </div>
       </div>
     </div>
