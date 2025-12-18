@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NeuronFlow.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5119e19c51fcb60ef9f46e65fa4b5816e7ff35ab")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7df2c0313abdabe29d2362b0f7081fd7e2f89880")]
 [assembly: System.Reflection.AssemblyProductAttribute("NeuronFlow.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NeuronFlow.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
