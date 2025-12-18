@@ -14,5 +14,7 @@ namespace NeuronFlow.Infrastructure.Persistence
         public DbSet<Project> Projects { get; set; }
         public DbSet<Connection> Connections { get; set; }
 
+        public DbSet<Recipe> Recipes { get; set; }
+
     }
 }

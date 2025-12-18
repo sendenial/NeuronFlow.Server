@@ -7,6 +7,11 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div className="d-flex flex-column vh-100">
       {/* Top Navbar */}
@@ -14,7 +19,7 @@ export default function Dashboard() {
         <Navbar.Brand href="#home">NeuronFlow</Navbar.Brand>
         <Nav className="ms-auto">
           <span className="text-white me-3 mt-2">Welcome, {user?.fullName}</span>
-          <Nav.Link onClick={logout}>Logout</Nav.Link>
+          <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
         </Nav>
       </Navbar>
 
@@ -23,22 +28,27 @@ export default function Dashboard() {
         <div className="bg-light border-end" style={{ width: '250px', minHeight: '100%' }}>
           <div className="p-3">
             <Nav className="flex-column nav-pills">
+              
               <NavLink to="/dashboard/projects" className={({isActive}) => `nav-link mb-2 ${isActive ? 'active' : 'link-dark'}`}>
                 📊 Projects
               </NavLink>
+
+              {/* UPDATED: Points to the new Recipe Setup Wizard */}
+              <NavLink to="/dashboard/recipe/new" className={({isActive}) => `nav-link mb-2 ${isActive ? 'active' : 'link-dark'}`}>
+                ⚡ New Recipe
+              </NavLink>
+
               <NavLink to="/dashboard/connections" className={({isActive}) => `nav-link mb-2 ${isActive ? 'active' : 'link-dark'}`}>
                 🔌 Connections
               </NavLink>
-              <NavLink to="/dashboard/builder" className={({isActive}) => `nav-link mb-2 ${isActive ? 'active' : 'link-dark'}`}>
-                ⚙️ Workflow Builder
-              </NavLink>
+
             </Nav>
           </div>
         </div>
 
         {/* Main Content Area */}
         <div className="flex-grow-1 bg-light">
-          <Outlet /> {/* This renders Projects, Connections, or Workflow based on URL */}
+          <Outlet /> 
         </div>
       </div>
     </div>

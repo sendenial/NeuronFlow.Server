@@ -39,14 +39,14 @@ namespace NeuronFlow.Server.Controllers
                     CreatedByName = _context.Users
                         .Where(u => u.Id == p.CreatedBy.ToString())
                         .Select(u => u.FullName)
-                        .FirstOrDefault() ?? "Unknown",
+                        .FirstOrDefault() ?? null,
 
                     ModifiedBy = p.ModifiedBy,
                     ModifiedDate = p.ModifiedDate,
                     ModifiedByName = _context.Users
                         .Where(u => u.Id == p.ModifiedBy.ToString())
                         .Select(u => u.FullName)
-                        .FirstOrDefault() ?? "Unknown"
+                        .FirstOrDefault() ?? null
                 })
                 .ToListAsync();
 
@@ -70,14 +70,14 @@ namespace NeuronFlow.Server.Controllers
                     CreatedByName = _context.Users
                         .Where(u => u.Id == p.CreatedBy.ToString())
                         .Select(u => u.FullName)
-                        .FirstOrDefault() ?? "Unknown",
+                        .FirstOrDefault() ?? null,
 
                     ModifiedBy = p.ModifiedBy,
                     ModifiedDate = p.ModifiedDate,
                     ModifiedByName = _context.Users
                         .Where(u => u.Id == p.ModifiedBy.ToString())
                         .Select(u => u.FullName)
-                        .FirstOrDefault() ?? "Unknown"
+                        .FirstOrDefault() ?? null
                 })
                 .FirstOrDefaultAsync();
 

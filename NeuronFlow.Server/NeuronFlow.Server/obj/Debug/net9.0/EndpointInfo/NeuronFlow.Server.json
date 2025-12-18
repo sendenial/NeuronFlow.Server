@@ -721,6 +721,180 @@
         }
       }
     },
+    "/api/recipes": {
+      "get": {
+        "tags": [
+          "Recipes"
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecipeResponseDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecipeResponseDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecipeResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Recipes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRecipeDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRecipeDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRecipeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipe"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipe"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipe"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recipes/{id}": {
+      "get": {
+        "tags": [
+          "Recipes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeResponseDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Recipes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRecipeDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRecipeDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRecipeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/report/export": {
       "post": {
         "tags": [
@@ -970,6 +1144,24 @@
         },
         "additionalProperties": false
       },
+      "CreateRecipeDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "triggerType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Customer": {
         "type": "object",
         "properties": {
@@ -1177,6 +1369,125 @@
         },
         "additionalProperties": false
       },
+      "Recipe": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "recipeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "triggerType": {
+            "type": "string",
+            "nullable": true
+          },
+          "definitionJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDelete": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RecipeResponseDto": {
+        "type": "object",
+        "properties": {
+          "recipeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "triggerType": {
+            "type": "string",
+            "nullable": true
+          },
+          "definitionJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectName": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "modifiedBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByName": {
+            "type": "string",
+            "nullable": true
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modifiedByName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RefreshTokenRequest": {
         "type": "object",
         "properties": {
@@ -1241,6 +1552,24 @@
             "type": "string"
           },
           "projectDescription": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateRecipeDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "definitionJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
             "type": "string",
             "nullable": true
           }

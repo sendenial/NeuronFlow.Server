@@ -1,3 +1,5 @@
+// src/components/ConnectionModal.js
+
 import React, { useEffect, useState } from 'react';
 import { Modal, Button, InputGroup, Form, Card, Spinner } from 'react-bootstrap';
 import api from '../services/api';
@@ -18,9 +20,10 @@ export default function ConnectionModal({
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
 
+  // --- 1. INITIALIZATION ---
   useEffect(() => {
     if (!show) {
-      // Reset when hidden
+      // Reset state when modal closes
       setStep(initialData ? 2 : 1);
       setIsTesting(false);
       setTestResult(null);
@@ -30,7 +33,7 @@ export default function ConnectionModal({
     }
 
     if (initialData) {
-      // Editing an existing connection
+      // Edit Mode
       setStep(2);
       setNewConnData({
         name: initialData.name || '',
@@ -43,13 +46,14 @@ export default function ConnectionModal({
         setConfigData({});
       }
     } else {
+      // Create Mode
       setStep(1);
       setNewConnData({ name: '', connectorType: null, projectId: fixedProjectId || '' });
       setConfigData({});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show, initialData]);
+  }, [show, initialData, fixedProjectId]);
 
+  // --- 2. HANDLERS ---
   const handleAppSelect = (typeId) => {
     const schema = CONNECTOR_SCHEMAS[typeId] || [];
     const defaults = {};
@@ -89,19 +93,9 @@ export default function ConnectionModal({
         configJson: JSON.stringify(configData)
       };
 
-      // If tests are required, run them automatically and block save on failure
-      if (requireTest) {
-        try {
-          await api.post('/connections/test', payload);
-        } catch (testErr) {
-          const msg = testErr.response?.data?.message || 'Connection test failed.';
-          setTestResult({ success: false, message: msg });
-          return;
-        }
-      }
-
-      if (initialData && initialData.id) {
-        await api.put(`/connections/${initialData.id}`, payload);
+      if (initialData && (initialData.id || initialData.connectorId)) {
+        const connId = initialData.id || initialData.connectorId;
+        await api.put(`/connections/${connId}`, payload);
       } else {
         await api.post('/connections', payload);
       }
@@ -112,6 +106,8 @@ export default function ConnectionModal({
       alert('Save failed: ' + (e.response?.data?.message || e.message));
     }
   };
+
+  // --- 3. RENDERERS ---
 
   const renderAppCatalog = () => {
     const filtered = CONNECTOR_CATALOG;
@@ -143,6 +139,7 @@ export default function ConnectionModal({
 
     return (
       <div className="p-3">
+        {/* Header */}
         <div className="d-flex align-items-center mb-4 pb-2 border-bottom">
           {step === 2 && !initialData && (
             <Button variant="link" className="p-0 me-3 text-decoration-none fs-5" onClick={() => setStep(1)}>←</Button>
@@ -153,11 +150,17 @@ export default function ConnectionModal({
           </div>
         </div>
 
+        {/* Standard Name */}
         <Form.Group className="mb-4">
           <Form.Label className="fw-bold small">Connection name <span className="text-danger">*</span></Form.Label>
-          <Form.Control value={newConnData.name} onChange={e => setNewConnData({ ...newConnData, name: e.target.value })} placeholder={`My ${app.name} account`} />
+          <Form.Control 
+            value={newConnData.name} 
+            onChange={e => setNewConnData({ ...newConnData, name: e.target.value })} 
+            placeholder={`My ${app.name} account`} 
+          />
         </Form.Group>
 
+        {/* Standard Location (Project) - Show if not fixed */}
         {!fixedProjectId && (
           <Form.Group className="mb-4">
             <Form.Label className="fw-bold small">Location <span className="text-danger">*</span></Form.Label>
@@ -168,20 +171,61 @@ export default function ConnectionModal({
           </Form.Group>
         )}
 
-        {schema.map(f => (
-          <Form.Group className="mb-4" key={f.key}>
-            <Form.Label className="fw-bold small">{f.label}{f.required && <span className="text-danger"> *</span>}</Form.Label>
-            {f.type === 'select' ? (
-              <Form.Select value={configData[f.key] || f.defaultValue || ''} onChange={e => setConfigData({ ...configData, [f.key]: e.target.value })}>
-                {(f.options || []).map(o => <option key={o} value={o}>{o}</option>)}
-              </Form.Select>
-            ) : (
-              <Form.Control value={configData[f.key] || f.defaultValue || ''} onChange={e => setConfigData({ ...configData, [f.key]: e.target.value })} type={f.type === 'password' ? 'password' : f.type === 'number' ? 'number' : 'text'} placeholder={f.placeholder || ''} />
-            )}
-            {f.helpText && <Form.Text className="text-muted" style={{ fontSize: '0.75rem', display: 'block', marginTop: '5px' }}>{f.helpText}</Form.Text>}
-          </Form.Group>
-        ))}
+        {/* DYNAMIC CONFIG FIELDS */}
+        {schema.map(f => {
+            // --- DEPENDENCY LOGIC ---
+            if (f.dependency) {
+                // 1. Check parent value in current config
+                let parentValue = configData[f.dependency.field];
+                
+                // 2. If parent value isn't set yet, look up its default
+                if (parentValue === undefined) {
+                    const parentField = schema.find(s => s.key === f.dependency.field);
+                    parentValue = parentField ? parentField.defaultValue : null;
+                }
 
+                // 3. If values mismatch, HIDE this field (return null)
+                if (parentValue !== f.dependency.value) {
+                    return null; 
+                }
+            }
+            // ------------------------
+
+            return (
+              <Form.Group className="mb-4" key={f.key}>
+                <Form.Label className="fw-bold small">
+                    {f.label}{f.required && <span className="text-danger"> *</span>}
+                </Form.Label>
+                
+                {f.type === 'select' ? (
+                  <Form.Select 
+                    value={configData[f.key] || f.defaultValue || ''} 
+                    onChange={e => setConfigData({ ...configData, [f.key]: e.target.value })}
+                  >
+                    {(f.options || []).map(o => <option key={o} value={o}>{o}</option>)}
+                  </Form.Select>
+                ) : f.type === 'textarea' ? (
+                   <Form.Control 
+                     as="textarea" 
+                     rows={3}
+                     value={configData[f.key] || ''} 
+                     onChange={e => setConfigData({ ...configData, [f.key]: e.target.value })} 
+                   />
+                ) : (
+                  <Form.Control 
+                    value={configData[f.key] || f.defaultValue || ''} 
+                    onChange={e => setConfigData({ ...configData, [f.key]: e.target.value })} 
+                    type={f.type === 'password' ? 'password' : f.type === 'number' ? 'number' : 'text'} 
+                    placeholder={f.placeholder || ''} 
+                  />
+                )}
+                
+                {f.helpText && <Form.Text className="text-muted" style={{ fontSize: '0.75rem', display: 'block', marginTop: '5px' }}>{f.helpText}</Form.Text>}
+              </Form.Group>
+            );
+        })}
+
+        {/* Test Result Alert */}
         {testResult && (
           <div className={`p-3 rounded ${testResult.success ? 'border border-success bg-light' : 'border border-danger bg-light'}`}> 
             <strong>{testResult.success ? 'Success' : 'Error'}:</strong> {testResult.message}
@@ -192,7 +236,7 @@ export default function ConnectionModal({
   };
 
   return (
-    <Modal show={show} onHide={onHide} size="lg" centered>
+    <Modal show={show} onHide={onHide} size="lg" centered backdrop="static">
       <Modal.Header closeButton>
         <Modal.Title>{initialData ? 'Edit Connection' : (step === 1 ? 'New Connection' : 'Configure')}</Modal.Title>
       </Modal.Header>
@@ -203,14 +247,14 @@ export default function ConnectionModal({
 
       {step === 2 && (
         <Modal.Footer className="justify-content-between">
-          <Button variant="secondary" onClick={() => { if (!initialData) setStep(1); }} disabled={isTesting || !!initialData}>Back</Button>
+          <Button variant="secondary" onClick={() => { if (!initialData) setStep(1); }} disabled={isTesting}>Back</Button>
 
           <div className="d-flex gap-2">
             <Button variant="outline-primary" onClick={handleTestConnection} disabled={isTesting}>
               {isTesting ? <Spinner size="sm" animation="border" /> : 'Test Connection'}
             </Button>
-            <Button variant="success" onClick={handleSave}>
-              {initialData ? 'Save' : 'Connect'}
+            <Button variant="success" onClick={handleSave} disabled={isTesting || (requireTest && !testResult?.success)}>
+              {initialData ? 'Save Changes' : 'Connect'}
             </Button>
           </div>
         </Modal.Footer>

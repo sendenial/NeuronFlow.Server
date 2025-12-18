@@ -1,36 +1,45 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
-import ProjectList from './components/ProjectList'; // NEW
-import ProjectDetails from './components/ProjectDetails'; // NEW
-import Connections from './components/Connections';
-import WorkflowBuilder from './WorkflowBuilder';
+import { Routes, Route, Navigate } from 'react-router-dom'; // REMOVED 'BrowserRouter'
 
-const PrivateRoute = ({ children }) => {
-  return localStorage.getItem('token') ? children : <Navigate to="/login" />;
-};
+import Dashboard from './components/Dashboard'; 
+import Login from './components/Login';
+
+import ProjectList from './components/ProjectList';
+import ProjectDetails from './components/ProjectDetails';
+import Connections from './components/Connections';
+import RecipeSetup from './components/RecipeSetup';
+import RecipeBuilder from './components/RecipeBuilder';
 
 function App() {
+  const isAuthenticated = !!localStorage.getItem('token'); 
+
   return (
+    // REMOVED <Router> tag here. The parent index.js likely handles it.
     <Routes>
+      {/* Public Routes */}
       <Route path="/login" element={<Login />} />
-      
-      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>}>
-        {/* Shows the Grid of Project Cards */}
+      <Route path="/" element={<Navigate to="/dashboard/projects" />} />
+
+      {/* Protected Dashboard Routes */}
+      <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}>
+        
+        {/* Default to projects when going to /dashboard */}
+        <Route index element={<Navigate to="projects" />} />
+        
         <Route path="projects" element={<ProjectList />} />
-        
-        {/* Shows the Specific Project Details (Assets List) */}
         <Route path="project/:projectId" element={<ProjectDetails />} />
-        
         <Route path="connections" element={<Connections />} />
-        <Route path="builder" element={<WorkflowBuilder />} />
         
-        {/* Default to projects list */}
-        <Route path="" element={<Navigate to="projects" />} />
+        {/* Recipe Routes */}
+        <Route path="recipe/new" element={<RecipeSetup />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/dashboard" />} />
+      {/* Full Screen Builder Route (Outside Dashboard Layout) */}
+      <Route 
+          path="/dashboard/recipe/:recipeId/builder" 
+          element={isAuthenticated ? <RecipeBuilder /> : <Navigate to="/login" />} 
+      />
+
     </Routes>
   );
 }

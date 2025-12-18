@@ -55,14 +55,14 @@ namespace NeuronFlow.Server.Controllers
                     CreatedByName = _context.Users
                         .Where(u => u.Id == c.CreatedBy.ToString())
                         .Select(u => u.FullName)
-                        .FirstOrDefault() ?? "Unknown",
+                        .FirstOrDefault() ?? null,
 
                     ModifiedBy = c.ModifiedBy,
                     ModifiedDate = c.ModifiedDate,
                     ModifiedByName = _context.Users
                         .Where(u => u.Id == c.ModifiedBy.ToString())
                         .Select(u => u.FullName)
-                        .FirstOrDefault() ?? "Unknown"
+                        .FirstOrDefault() ?? null
                 })
                 .ToListAsync();
 
@@ -89,14 +89,14 @@ namespace NeuronFlow.Server.Controllers
                     CreatedByName = _context.Users
                         .Where(u => u.Id == c.CreatedBy.ToString())
                         .Select(u => u.FullName)
-                        .FirstOrDefault() ?? "Unknown",
+                        .FirstOrDefault() ?? null,
 
                     ModifiedBy = c.ModifiedBy,
                     ModifiedDate = c.ModifiedDate,
                     ModifiedByName = _context.Users
                         .Where(u => u.Id == c.ModifiedBy.ToString())
                         .Select(u => u.FullName)
-                        .FirstOrDefault() ?? "Unknown"
+                        .FirstOrDefault() ?? null
                 })
                 .FirstOrDefaultAsync();
 
@@ -177,25 +177,115 @@ namespace NeuronFlow.Server.Controllers
         }
 
         [HttpPost("test")]
-        public IActionResult TestConnection([FromBody] CreateConnectionDto request)
+        public async Task<IActionResult> TestConnection([FromBody] CreateConnectionDto request)
         {
             try
             {
-                var config = JObject.Parse(request.ConfigJson);
-                string host = config["host"]?.ToString();
-                string username = config["username"]?.ToString();
-                string password = config["password"]?.ToString();
-                int port = config["port"] != null ? int.Parse(config["port"].ToString()) : 22;
+                var config = Newtonsoft.Json.Linq.JObject.Parse(request.ConfigJson);
 
-                if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                // --- 1. HTTP / REST API TEST (ID = 1) ---
+                if ((int)request.ConnectorType == 1)
                 {
-                    return BadRequest("Host, Username, and Password are required.");
+                    string baseUrl = config["baseUrl"]?.ToString();
+                    string authType = config["authType"]?.ToString(); // "None", "Basic", "Header Auth"
+
+                    if (string.IsNullOrEmpty(baseUrl))
+                        return BadRequest(new { message = "Base URL is required." });
+
+                    // Validate URL format
+                    if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out Uri validUri))
+                        return BadRequest(new { message = "Invalid Base URL format." });
+
+                    using (var client = new HttpClient())
+                    {
+                        client.Timeout = TimeSpan.FromSeconds(10); // 10s Timeout
+
+                        // A. Configure Authentication
+                        if (authType == "Basic")
+                        {
+                            string u = config["username"]?.ToString();
+                            string p = config["password"]?.ToString();
+                            if (string.IsNullOrEmpty(u) || string.IsNullOrEmpty(p))
+                                return BadRequest(new { message = "Username and Password required for Basic Auth." });
+
+                            var byteArray = System.Text.Encoding.ASCII.GetBytes($"{u}:{p}");
+                            client.DefaultRequestHeaders.Authorization =
+                                new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                        }
+                        else if (authType == "Bearer")
+                        {
+                            string token = config["bearerToken"]?.ToString();
+                            if (string.IsNullOrEmpty(token))
+                                return BadRequest(new { message = "Token is required." });
+
+                            client.DefaultRequestHeaders.Authorization =
+                                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                        }
+                        else if (authType == "Header Auth")
+                        {
+                            string hName = config["headerName"]?.ToString();
+                            string hVal = config["headerValue"]?.ToString();
+                            if (!string.IsNullOrEmpty(hName) && !string.IsNullOrEmpty(hVal))
+                            {
+                                client.DefaultRequestHeaders.Add(hName, hVal);
+                            }
+                        }
+
+                        // B. Send Request (Try to reach the server)
+                        try
+                        {
+                            // We use GET. Some APIs might prefer HEAD, but GET is safer for generic testing.
+                            var response = await client.GetAsync(validUri);
+
+                            // C. Analyze Response
+                            if (response.IsSuccessStatusCode)
+                            {
+                                return Ok(new { message = "Connection successful! (200 OK)" });
+                            }
+                            else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                            {
+                                return BadRequest(new { message = "Authentication Failed: 401 Unauthorized. Check credentials." });
+                            }
+                            else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                            {
+                                return BadRequest(new { message = "Access Denied: 403 Forbidden. Check permissions." });
+                            }
+                            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                            {
+                                // 404 means we REACHED the server, but the specific path is empty. 
+                                // For a generic "Connection Test", this is usually a SUCCESS (network-wise).
+                                return Ok(new { message = "Connected to Server (but endpoint returned 404). Network path is valid." });
+                            }
+                            else
+                            {
+                                return BadRequest(new { message = $"Server reachable but returned error: {response.StatusCode}" });
+                            }
+                        }
+                        catch (HttpRequestException ex)
+                        {
+                            return BadRequest(new { message = $"Network Error: Unable to reach {baseUrl}. ({ex.Message})" });
+                        }
+                        catch (TaskCanceledException)
+                        {
+                            return BadRequest(new { message = "Connection timed out. Server is not responding." });
+                        }
+                    }
                 }
 
-                // Logic for FTP / SFTP (ID = 2)
-                if (request.ConnectorType == Application.Enums.ConnectionType.Ftp) // Assuming ID 2 is FTP in your Enum
+                // --- 2. FTP / SFTP TEST (ID = 2) ---
+                else if ((int)request.ConnectorType == 2)
                 {
-                    // Try SFTP (Default usually)
+                    string host = config["host"]?.ToString();
+                    string username = config["username"]?.ToString();
+                    string password = config["password"]?.ToString();
+                    int port = config["port"] != null ? int.Parse(config["port"].ToString()) : 22;
+
+                    if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                    {
+                        return BadRequest(new { message = "Host, Username, and Password are required." });
+                    }
+
+                    // SFTP Check
                     if (port == 22 || config["protocol"]?.ToString() == "SFTP")
                     {
                         var connectionInfo = new PasswordConnectionInfo(host, port, username, password)
@@ -209,18 +299,15 @@ namespace NeuronFlow.Server.Controllers
                             {
                                 client.Connect();
                                 client.Disconnect();
+                                return Ok(new { message = "SFTP Connection successful!" });
                             }
-                            catch (SocketException)
+                            catch (System.Net.Sockets.SocketException)
                             {
-                                return BadRequest(new { message = $"Network Error: Unable to reach host '{host}' on port {port}. Check your firewall or IP." });
+                                return BadRequest(new { message = $"Network Error: Unable to reach host '{host}'." });
                             }
-                            catch (SshOperationTimeoutException)
+                            catch (Renci.SshNet.Common.SshAuthenticationException)
                             {
-                                return BadRequest(new { message = "Connection Timed Out. The server is not responding." });
-                            }
-                            catch (SshAuthenticationException)
-                            {
-                                return BadRequest(new { message = "Authentication failed. Wrong username or password." });
+                                return BadRequest(new { message = "SFTP Authentication failed. Wrong credentials." });
                             }
                             catch (Exception ex)
                             {
@@ -228,42 +315,35 @@ namespace NeuronFlow.Server.Controllers
                             }
                         }
                     }
-                    // Try FTP
+                    // FTP Check
                     else
                     {
-                        using (var client = new FtpClient(host, username, password, port))
+                        using (var client = new FluentFTP.FtpClient(host, username, password, port))
                         {
-                            // Set timeout
                             //client.ConnectTimeout = 5000;
-
                             try
                             {
                                 client.Connect();
                                 client.Disconnect();
-                            }
-                            catch (IOException ex)
-                            {
-                                // THIS CATCHES YOUR SPECIFIC ERROR
-                                return BadRequest(new { message = $"Network Error: The server '{host}' did not respond. (Firewall or wrong IP?)" });
-                            }
-                            catch (SocketException)
-                            {
-                                return BadRequest(new { message = "Unable to connect. Check Host/Port." });
+                                return Ok(new { message = "FTP Connection successful!" });
                             }
                             catch (FluentFTP.Exceptions.FtpAuthenticationException)
                             {
                                 return BadRequest(new { message = "FTP Authentication failed." });
                             }
+                            catch (Exception ex)
+                            {
+                                return BadRequest(new { message = $"FTP Error: {ex.Message}" });
+                            }
                         }
                     }
                 }
-                // Add logic for SQL (ID = 0) or HTTP (ID = 1) here if needed...
 
-                return Ok(new { message = "Connection successful!" });
+                return BadRequest(new { message = "Unknown Connector Type." });
             }
             catch (Exception ex)
             {
-                return BadRequest($"Connection failed: {ex.Message}");
+                return BadRequest(new { message = $"System Error: {ex.Message}" });
             }
         }
     }
