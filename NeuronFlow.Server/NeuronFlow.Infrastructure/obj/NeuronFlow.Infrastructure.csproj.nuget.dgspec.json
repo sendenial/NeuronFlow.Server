@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\NeuronFlow.Infrastructure.csproj": {}
+    "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\NeuronFlow.Infrastructure.csproj": {}
   },
   "projects": {
-    "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\NeuronFlow.Application.csproj": {
+    "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\NeuronFlow.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\NeuronFlow.Application.csproj",
+        "projectUniqueName": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\NeuronFlow.Application.csproj",
         "projectName": "NeuronFlow.Application",
-        "projectPath": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\NeuronFlow.Application.csproj",
+        "projectPath": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\NeuronFlow.Application.csproj",
         "packagesPath": "C:\\Users\\shekh\\.nuget\\packages\\",
-        "outputPath": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\obj\\",
+        "outputPath": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -80,14 +80,14 @@
         }
       }
     },
-    "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\NeuronFlow.Domain.csproj": {
+    "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\NeuronFlow.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\NeuronFlow.Domain.csproj",
+        "projectUniqueName": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\NeuronFlow.Domain.csproj",
         "projectName": "NeuronFlow.Domain",
-        "projectPath": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\NeuronFlow.Domain.csproj",
+        "projectPath": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\NeuronFlow.Domain.csproj",
         "packagesPath": "C:\\Users\\shekh\\.nuget\\packages\\",
-        "outputPath": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\obj\\",
+        "outputPath": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -109,8 +109,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\NeuronFlow.Application.csproj": {
-                "projectPath": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\NeuronFlow.Application.csproj"
+              "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\NeuronFlow.Application.csproj": {
+                "projectPath": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Application\\NeuronFlow.Application.csproj"
               }
             }
           }
@@ -156,14 +156,14 @@
         }
       }
     },
-    "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\NeuronFlow.Infrastructure.csproj": {
+    "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\NeuronFlow.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\NeuronFlow.Infrastructure.csproj",
+        "projectUniqueName": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\NeuronFlow.Infrastructure.csproj",
         "projectName": "NeuronFlow.Infrastructure",
-        "projectPath": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\NeuronFlow.Infrastructure.csproj",
+        "projectPath": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\NeuronFlow.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\shekh\\.nuget\\packages\\",
-        "outputPath": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\obj\\",
+        "outputPath": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -185,8 +185,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\NeuronFlow.Domain.csproj": {
-                "projectPath": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\NeuronFlow.Domain.csproj"
+              "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\NeuronFlow.Domain.csproj": {
+                "projectPath": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Domain\\NeuronFlow.Domain.csproj"
               }
             }
           }

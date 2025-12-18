@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "NVtmSpMW/bI=",
+  "dgSpecHash": "icwf6eG4MHI=",
   "success": true,
-  "projectFilePath": "D:\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\NeuronFlow.Infrastructure.csproj",
+  "projectFilePath": "D:\\AI\\NeuronFlow.Server\\NeuronFlow.Server\\NeuronFlow.Infrastructure\\NeuronFlow.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\shekh\\.nuget\\packages\\automapper\\15.1.0\\automapper.15.1.0.nupkg.sha512",
     "C:\\Users\\shekh\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",

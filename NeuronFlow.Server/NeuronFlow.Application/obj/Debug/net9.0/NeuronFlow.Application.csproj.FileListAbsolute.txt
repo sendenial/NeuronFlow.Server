@@ -10,3 +10,16 @@ D:\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\N
 D:\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\refint\NeuronFlow.Application.dll
 D:\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\NeuronFlow.Application.pdb
 D:\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\ref\NeuronFlow.Application.dll
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\bin\Debug\net9.0\NeuronFlow.Application.deps.json
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\bin\Debug\net9.0\NeuronFlow.Application.dll
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\bin\Debug\net9.0\NeuronFlow.Application.pdb
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\NeuronFlow.Application.csproj.AssemblyReference.cache
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\NeuronFlow.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\NeuronFlow.Application.AssemblyInfoInputs.cache
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\NeuronFlow.Application.AssemblyInfo.cs
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\NeuronFlow.Application.csproj.CoreCompileInputs.cache
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\NeuronFlow.Application.sourcelink.json
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\NeuronFlow.Application.dll
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\refint\NeuronFlow.Application.dll
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\NeuronFlow.Application.pdb
+D:\AI\NeuronFlow.Server\NeuronFlow.Server\NeuronFlow.Application\obj\Debug\net9.0\ref\NeuronFlow.Application.dll
