@@ -17,23 +17,36 @@ export default function RecipeSetup() {
     const [projects, setProjects] = useState([]);
 
     useEffect(() => {
+
         api.get('/projects').then(res => {
             setProjects(res.data);
-            if(res.data.length > 0) setProjectId(res.data[0].projectId);
+            if (res.data.length > 0) setProjectId(res.data[0].projectId);
+        }).catch((err) => {
+            if (err.response && err.response.status === 401) {
+                navigate('/login');
+            }
         });
     }, []);
 
     const handleCreate = async () => {
-        if(!name || !projectId) return alert('Please fill all fields');
+        if (!name || !projectId) return alert('Please fill all fields');
         try {
             const res = await api.post('/recipes', {
-                name, 
-                projectId, 
+                name,
+                projectId,
                 triggerType: selectedTrigger
+            }).then(res => {
+                // Navigate to the Builder
+                navigate(`/dashboard/recipe/${res.data.recipeId}/builder`);
+            }).catch((err) => {
+
+                if (err.response && err.response.status === 401) {
+                    navigate('/login');
+                }   
             });
             // Navigate to the Builder
-            navigate(`/dashboard/recipe/${res.data.recipeId}/builder`);
-        } catch(e) {
+            // navigate(`/dashboard/recipe/${res.data.recipeId}/builder`);
+        } catch (e) {
             alert('Failed to create recipe');
         }
     };
@@ -41,7 +54,7 @@ export default function RecipeSetup() {
     return (
         <div className="p-5 bg-light h-100">
             <h3 className="fw-bold mb-4">Set up your recipe</h3>
-            
+
             <Card className="p-4 shadow-sm border-0">
                 <Form.Group className="mb-4">
                     <Form.Label className="fw-bold">Name</Form.Label>
@@ -60,9 +73,9 @@ export default function RecipeSetup() {
                     <Row className="g-3">
                         {STARTING_POINTS.map(pt => (
                             <Col md={3} key={pt.id}>
-                                <div 
+                                <div
                                     className={`p-3 border rounded text-center cursor-pointer ${selectedTrigger === pt.id ? 'border-primary bg-primary bg-opacity-10' : 'bg-white'}`}
-                                    style={{cursor: 'pointer', height: '100%'}}
+                                    style={{ cursor: 'pointer', height: '100%' }}
                                     onClick={() => setSelectedTrigger(pt.id)}
                                 >
                                     <div className="fs-1 mb-2">{pt.icon}</div>
@@ -75,7 +88,7 @@ export default function RecipeSetup() {
                 </div>
 
                 <div className="mt-2">
-                    <Button variant="primary" onClick={handleCreate} className="px-4 py-2 fw-bold" style={{backgroundColor: '#00796b', border:'none'}}>
+                    <Button variant="primary" onClick={handleCreate} className="px-4 py-2 fw-bold" style={{ backgroundColor: '#00796b', border: 'none' }}>
                         Start Building
                     </Button>
                 </div>

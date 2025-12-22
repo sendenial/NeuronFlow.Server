@@ -29,4 +29,32 @@ export const login = async (email, password) => {
     return response.data;
 };
 
+// FTP Connections
+export const ftpApi = {
+  getConnections: () => api.get('/connections').catch(() => ({ data: [] })),
+  createConnection: (data) => api.post('/connections', data),
+};
+
+// CSV Processing
+export const csvApi = {
+  uploadAndParse: (file, config, connectionId) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('connectionId', connectionId);
+    formData.append('separator', config.separator);
+    formData.append('hasHeader', config.hasHeader.toString());
+    return api.post('/csv/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  createFromData: (data) => api.post('/flows/create-from-csv', data),
+};
+
+// Flow Management
+export const flowApi = {
+  saveFlow: (flow) => api.post('/flows/save', flow),
+  testFlow: (flow) => api.post('/flows/test', flow),
+};
+
+
 export default api;

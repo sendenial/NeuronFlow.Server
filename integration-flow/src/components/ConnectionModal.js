@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Button, InputGroup, Form, Card, Spinner } from 'react-bootstrap';
 import api from '../services/api';
 import { CONNECTOR_CATALOG, CONNECTOR_SCHEMAS } from '../constants/connectorConfig';
+import { useNavigate } from 'react-router-dom';
 
 export default function ConnectionModal({
   show,
@@ -12,7 +13,7 @@ export default function ConnectionModal({
   fixedProjectId = null,
   projects = [],
   requireTest = false,
-  onSaved = () => {}
+  onSaved = () => { }
 }) {
   const [step, setStep] = useState(initialData ? 2 : 1);
   const [newConnData, setNewConnData] = useState({ name: '', connectorType: null, projectId: fixedProjectId || '' });
@@ -20,6 +21,8 @@ export default function ConnectionModal({
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
 
+  const navigate = useNavigate();
+  
   // --- 1. INITIALIZATION ---
   useEffect(() => {
     if (!show) {
@@ -79,6 +82,9 @@ export default function ConnectionModal({
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data || 'Connection failed. Check your credentials.';
       setTestResult({ success: false, message: msg });
+      if (err.response && err.response.status === 401) {
+        navigate('/login');
+      }
     } finally {
       setIsTesting(false);
     }
@@ -104,6 +110,9 @@ export default function ConnectionModal({
       onHide();
     } catch (e) {
       alert('Save failed: ' + (e.response?.data?.message || e.message));
+      if (e.response && e.response.status === 401) {
+        navigate('/login');
+      }
     }
   };
 
@@ -153,10 +162,10 @@ export default function ConnectionModal({
         {/* Standard Name */}
         <Form.Group className="mb-4">
           <Form.Label className="fw-bold small">Connection name <span className="text-danger">*</span></Form.Label>
-          <Form.Control 
-            value={newConnData.name} 
-            onChange={e => setNewConnData({ ...newConnData, name: e.target.value })} 
-            placeholder={`My ${app.name} account`} 
+          <Form.Control
+            value={newConnData.name}
+            onChange={e => setNewConnData({ ...newConnData, name: e.target.value })}
+            placeholder={`My ${app.name} account`}
           />
         </Form.Group>
 
@@ -173,61 +182,61 @@ export default function ConnectionModal({
 
         {/* DYNAMIC CONFIG FIELDS */}
         {schema.map(f => {
-            // --- DEPENDENCY LOGIC ---
-            if (f.dependency) {
-                // 1. Check parent value in current config
-                let parentValue = configData[f.dependency.field];
-                
-                // 2. If parent value isn't set yet, look up its default
-                if (parentValue === undefined) {
-                    const parentField = schema.find(s => s.key === f.dependency.field);
-                    parentValue = parentField ? parentField.defaultValue : null;
-                }
+          // --- DEPENDENCY LOGIC ---
+          if (f.dependency) {
+            // 1. Check parent value in current config
+            let parentValue = configData[f.dependency.field];
 
-                // 3. If values mismatch, HIDE this field (return null)
-                if (parentValue !== f.dependency.value) {
-                    return null; 
-                }
+            // 2. If parent value isn't set yet, look up its default
+            if (parentValue === undefined) {
+              const parentField = schema.find(s => s.key === f.dependency.field);
+              parentValue = parentField ? parentField.defaultValue : null;
             }
-            // ------------------------
 
-            return (
-              <Form.Group className="mb-4" key={f.key}>
-                <Form.Label className="fw-bold small">
-                    {f.label}{f.required && <span className="text-danger"> *</span>}
-                </Form.Label>
-                
-                {f.type === 'select' ? (
-                  <Form.Select 
-                    value={configData[f.key] || f.defaultValue || ''} 
-                    onChange={e => setConfigData({ ...configData, [f.key]: e.target.value })}
-                  >
-                    {(f.options || []).map(o => <option key={o} value={o}>{o}</option>)}
-                  </Form.Select>
-                ) : f.type === 'textarea' ? (
-                   <Form.Control 
-                     as="textarea" 
-                     rows={3}
-                     value={configData[f.key] || ''} 
-                     onChange={e => setConfigData({ ...configData, [f.key]: e.target.value })} 
-                   />
-                ) : (
-                  <Form.Control 
-                    value={configData[f.key] || f.defaultValue || ''} 
-                    onChange={e => setConfigData({ ...configData, [f.key]: e.target.value })} 
-                    type={f.type === 'password' ? 'password' : f.type === 'number' ? 'number' : 'text'} 
-                    placeholder={f.placeholder || ''} 
-                  />
-                )}
-                
-                {f.helpText && <Form.Text className="text-muted" style={{ fontSize: '0.75rem', display: 'block', marginTop: '5px' }}>{f.helpText}</Form.Text>}
-              </Form.Group>
-            );
+            // 3. If values mismatch, HIDE this field (return null)
+            if (parentValue !== f.dependency.value) {
+              return null;
+            }
+          }
+          // ------------------------
+
+          return (
+            <Form.Group className="mb-4" key={f.key}>
+              <Form.Label className="fw-bold small">
+                {f.label}{f.required && <span className="text-danger"> *</span>}
+              </Form.Label>
+
+              {f.type === 'select' ? (
+                <Form.Select
+                  value={configData[f.key] || f.defaultValue || ''}
+                  onChange={e => setConfigData({ ...configData, [f.key]: e.target.value })}
+                >
+                  {(f.options || []).map(o => <option key={o} value={o}>{o}</option>)}
+                </Form.Select>
+              ) : f.type === 'textarea' ? (
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={configData[f.key] || ''}
+                  onChange={e => setConfigData({ ...configData, [f.key]: e.target.value })}
+                />
+              ) : (
+                <Form.Control
+                  value={configData[f.key] || f.defaultValue || ''}
+                  onChange={e => setConfigData({ ...configData, [f.key]: e.target.value })}
+                  type={f.type === 'password' ? 'password' : f.type === 'number' ? 'number' : 'text'}
+                  placeholder={f.placeholder || ''}
+                />
+              )}
+
+              {f.helpText && <Form.Text className="text-muted" style={{ fontSize: '0.75rem', display: 'block', marginTop: '5px' }}>{f.helpText}</Form.Text>}
+            </Form.Group>
+          );
         })}
 
         {/* Test Result Alert */}
         {testResult && (
-          <div className={`p-3 rounded ${testResult.success ? 'border border-success bg-light' : 'border border-danger bg-light'}`}> 
+          <div className={`p-3 rounded ${testResult.success ? 'border border-success bg-light' : 'border border-danger bg-light'}`}>
             <strong>{testResult.success ? 'Success' : 'Error'}:</strong> {testResult.message}
           </div>
         )}

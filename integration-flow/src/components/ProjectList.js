@@ -23,7 +23,9 @@ export default function ProjectList() {
             const res = await api.get('/projects');
             setProjects(res.data);
         } catch (err) {
-            console.error(err);
+            if (err.response && err.response.status === 401) {
+                navigate('/login');
+            }
         }
     };
 
@@ -35,14 +37,24 @@ export default function ProjectList() {
             navigate(`/dashboard/project/${res.data.projectId}`);
         } catch (err) {
             alert('Failed to create project');
+            if (err.response && err.response.status === 401) {
+                navigate('/login');
+            }
         }
     };
 
     const handleDelete = async (e, id) => {
         e.stopPropagation();
         if (window.confirm('Are you sure you want to delete this project?')) {
-            await api.delete(`/projects/${id}`);
-            fetchProjects();
+            try {
+                await api.delete(`/projects/${id}`);
+                fetchProjects();
+            } catch (err) {
+                alert('Failed to delete project');
+                if (err.response && err.response.status === 401) {
+                    navigate('/login');
+                }
+            }
         }
     };
 
@@ -59,6 +71,9 @@ export default function ProjectList() {
             fetchProjects();
         } catch (err) {
             alert('Failed to update project');
+            if (err.response && err.response.status === 401) {
+                navigate('/login');
+            }
         }
     };
 

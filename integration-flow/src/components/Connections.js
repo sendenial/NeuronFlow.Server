@@ -29,7 +29,12 @@ export default function Connections() {
       ]);
       setConnections(connRes.data);
       setProjects(projRes.data);
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.status === 401) {
+        navigate('/login');
+      }
+    }
   };
 
   const filteredConnections = connections.filter(c =>
@@ -46,6 +51,10 @@ export default function Connections() {
         fetchData(); // Refresh list
       } catch (err) {
         alert('Failed to delete connection');
+
+        if (err.response && err.response.status === 401) {
+          navigate('/login');
+        }
       }
     }
   };
@@ -157,11 +166,11 @@ export default function Connections() {
           })}
 
           {filteredConnections.length === 0 && (
-                <div className="text-center py-5 text-muted bg-white border rounded">
-                    <h5>No Connections found</h5>
-                    <p>Try clearing your search or create a new asset.</p>
-                </div>
-            )}
+            <div className="text-center py-5 text-muted bg-white border rounded">
+              <h5>No Connections found</h5>
+              <p>Try clearing your search or create a new asset.</p>
+            </div>
+          )}
 
         </div>
       </div>
